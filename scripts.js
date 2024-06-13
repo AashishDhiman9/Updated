@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const customColumnForm = document.getElementById('customColumnForm');
     const recordsTableBody = document.getElementById('recordsTableBody');
     const customColumnsHead = document.getElementById('customColumnsHead');
+    const customFieldsContainer = document.getElementById('customFieldsContainer');
     const totalSales = document.getElementById('totalSales');
     const totalExpenditure = document.getElementById('totalExpenditure');
     const totalProfit = document.getElementById('totalProfit');
@@ -48,6 +49,28 @@ document.addEventListener('DOMContentLoaded', () => {
         totalProfit.textContent = profitSum;
     }
 
+    function initializeTableHeader() {
+        customColumnsHead.innerHTML = '';
+        customColumns.forEach(col => {
+            customColumnsHead.innerHTML += `<th>${col}</th>`;
+        });
+    }
+
+    function initializeCustomFields() {
+        customFieldsContainer.innerHTML = '';
+        customColumns.forEach(col => {
+            const label = document.createElement('label');
+            label.htmlFor = col;
+            label.textContent = `${col}:`;
+            customFieldsContainer.appendChild(label);
+
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.id = col;
+            customFieldsContainer.appendChild(input);
+        });
+    }
+
     form.addEventListener('submit', (event) => {
         event.preventDefault();
 
@@ -61,7 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const record = { date, incomeSource, sales, expenditureDetails, expenditure, profit };
 
         customColumns.forEach(col => {
-            record[col] = '';
+            record[col] = document.getElementById(col).value || '';
         });
 
         records.push(record);
@@ -86,6 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         updateTable();
         updateLocalStorage();
+        initializeCustomFields();
         customColumnForm.reset();
     });
 
@@ -119,13 +143,8 @@ document.addEventListener('DOMContentLoaded', () => {
         doc.save('khata_record.pdf');
     });
 
-    function initializeTableHeader() {
-        customColumns.forEach(col => {
-            customColumnsHead.innerHTML += `<th>${col}</th>`;
-        });
-    }
-
     initializeTableHeader();
+    initializeCustomFields();
     updateTable();
     updateTotals();
 });
